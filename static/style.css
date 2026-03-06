@@ -1,0 +1,470 @@
+/* ================================================================
+   style.css — Zevoir TaskBot
+   Modern chat UI with full dark / light theme switching.
+   Aesthetic: refined dark-glass terminal feel in dark mode,
+              clean warm-white editorial in light mode.
+   ================================================================ */
+
+
+/* ── 1. CSS VARIABLES ────────────────────────────────────────────
+   Everything lives in variables → one toggle switches the whole UI
+   ────────────────────────────────────────────────────────────────*/
+:root {
+  /* ── Shared ── */
+  --radius-bubble : 18px;
+  --radius-input  : 14px;
+  --radius-card   : 20px;
+  --font-head     : 'Syne', sans-serif;
+  --font-body     : 'Figtree', sans-serif;
+  --transition    : 0.22s ease;
+
+  /* ── DARK THEME (default) ── */
+  --page-bg       : #0c0e16;
+  --shell-bg      : #12151f;
+  --header-bg     : #181c2a;
+  --footer-bg     : #181c2a;
+  --border-color  : #252a3d;
+  --input-bg      : #1e2236;
+
+  --user-bubble   : #3d5cff;       /* vivid indigo */
+  --user-text     : #ffffff;
+  --bot-bubble    : #1e2236;
+  --bot-text      : #dde1f5;
+
+  --accent        : #3d5cff;
+  --accent-glow   : rgba(61,92,255,0.35);
+  --send-bg       : linear-gradient(135deg, #3d5cff, #7b5ea7);
+
+  --text-primary  : #eef0fa;
+  --text-secondary: #7680a8;
+  --text-meta     : #4a5070;
+  --status-color  : #3ecf8e;
+
+  --dot-grid      : rgba(255,255,255,0.025);
+  --shadow        : 0 20px 60px rgba(0,0,0,0.55);
+}
+
+/* ── LIGHT THEME — applied when <html data-theme="light"> ── */
+[data-theme="light"] {
+  --page-bg       : #f0f2fa;
+  --shell-bg      : #ffffff;
+  --header-bg     : #f7f8fc;
+  --footer-bg     : #f7f8fc;
+  --border-color  : #e2e5f0;
+  --input-bg      : #edf0fa;
+
+  --user-bubble   : #3d5cff;
+  --user-text     : #ffffff;
+  --bot-bubble    : #edf0fa;
+  --bot-text      : #1a1d30;
+
+  --text-primary  : #1a1d30;
+  --text-secondary: #5a6080;
+  --text-meta     : #9098b8;
+  --status-color  : #28b07a;
+
+  --dot-grid      : rgba(0,0,0,0.04);
+  --shadow        : 0 20px 60px rgba(0,0,0,0.12);
+}
+
+
+/* ── 2. RESET & BASE ─────────────────────────────────────────── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  font-family: var(--font-body);
+  background-color: var(--page-bg);
+  background-image: radial-gradient(circle, var(--dot-grid) 1px, transparent 1px);
+  background-size: 26px 26px;
+  color: var(--text-primary);
+  transition: background-color var(--transition), color var(--transition);
+}
+
+
+/* ── 3. CHAT SHELL ───────────────────────────────────────────── */
+.chat-shell {
+  display    : flex;
+  flex-direction: column;
+  width      : 100%;
+  max-width  : 700px;
+  height     : 100vh;
+  margin     : 0 auto;
+  background : var(--shell-bg);
+  box-shadow : var(--shadow);
+  border-left : 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+  overflow   : hidden;
+  transition : background var(--transition);
+}
+
+
+/* ── 4. HEADER ───────────────────────────────────────────────── */
+.chat-header {
+  display        : flex;
+  align-items    : center;
+  justify-content: space-between;
+  padding        : 14px 20px;
+  background     : var(--header-bg);
+  border-bottom  : 1px solid var(--border-color);
+  flex-shrink    : 0;
+  transition     : background var(--transition), border-color var(--transition);
+  z-index        : 10;
+}
+
+.header-left {
+  display    : flex;
+  align-items: center;
+  gap        : 12px;
+}
+
+/* Circular avatar with gradient */
+.bot-avatar {
+  width        : 44px;
+  height       : 44px;
+  border-radius: 50%;
+  background   : linear-gradient(135deg, #3d5cff, #7b5ea7);
+  display      : flex;
+  align-items  : center;
+  justify-content: center;
+  font-family  : var(--font-head);
+  font-size    : 20px;
+  font-weight  : 800;
+  color        : #fff;
+  flex-shrink  : 0;
+  box-shadow   : 0 0 0 3px var(--accent-glow);
+}
+
+.bot-name {
+  font-family  : var(--font-head);
+  font-size    : 17px;
+  font-weight  : 800;
+  color        : var(--text-primary);
+  letter-spacing: -0.3px;
+  line-height  : 1.2;
+}
+
+/* Online status row */
+.status-row {
+  display    : flex;
+  align-items: center;
+  gap        : 5px;
+  margin-top : 2px;
+}
+
+.status-dot {
+  width        : 8px;
+  height       : 8px;
+  border-radius: 50%;
+  background   : var(--status-color);
+  box-shadow   : 0 0 6px var(--status-color);
+  animation    : pulse-dot 2.5s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+
+.status-text {
+  font-size  : 12px;
+  color      : var(--status-color);
+  font-weight: 600;
+}
+
+/* Header right buttons */
+.header-right {
+  display    : flex;
+  align-items: center;
+  gap        : 8px;
+}
+
+/* Generic icon button */
+.icon-btn {
+  display      : flex;
+  align-items  : center;
+  gap          : 6px;
+  background   : transparent;
+  border       : 1px solid var(--border-color);
+  color        : var(--text-secondary);
+  padding      : 7px 12px;
+  border-radius: 10px;
+  font-family  : var(--font-body);
+  font-size    : 13px;
+  font-weight  : 500;
+  cursor       : pointer;
+  transition   : all var(--transition);
+}
+
+.icon-btn:hover {
+  background: var(--input-bg);
+  color     : var(--text-primary);
+  border-color: var(--accent);
+}
+
+/* Show/hide moon & sun icons based on theme */
+[data-theme="dark"]  .icon-sun  { display: none; }
+[data-theme="light"] .icon-moon { display: none; }
+
+/* Clear button hover — red accent */
+.clear-icon-btn:hover {
+  background  : rgba(255,60,80,0.1);
+  border-color: #ff3c50;
+  color       : #ff3c50;
+}
+
+
+/* ── 5. MESSAGES AREA ────────────────────────────────────────── */
+.chat-messages {
+  flex       : 1;
+  overflow-y : auto;
+  padding    : 22px 18px;
+  display    : flex;
+  flex-direction: column;
+  gap        : 10px;
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+.chat-messages::-webkit-scrollbar { width: 4px; }
+.chat-messages::-webkit-scrollbar-track { background: transparent; }
+.chat-messages::-webkit-scrollbar-thumb {
+  background   : var(--border-color);
+  border-radius: 99px;
+}
+
+/* Date divider */
+.date-divider {
+  text-align : center;
+  font-size  : 11.5px;
+  color      : var(--text-meta);
+  margin     : 4px 0 8px;
+  display    : flex;
+  align-items: center;
+  gap        : 10px;
+}
+.date-divider::before,
+.date-divider::after {
+  content    : '';
+  flex       : 1;
+  height     : 1px;
+  background : var(--border-color);
+}
+
+
+/* ── 6. MESSAGE ROWS & BUBBLES ───────────────────────────────── */
+.message-row {
+  display       : flex;
+  flex-direction: row;       /* avatar + bubble side by side */
+  align-items   : flex-end;  /* align to bottom so avatar sits at bubble base */
+  max-width     : 85%;
+  gap           : 8px;
+  animation     : popIn 0.22s cubic-bezier(.34,1.56,.64,1) forwards;
+  opacity       : 0;
+  transform     : scale(0.92) translateY(10px);
+}
+
+@keyframes popIn {
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* User messages sit on the right */
+.message-row.user {
+  align-self     : flex-end;
+}
+
+/* Bot messages sit on the left */
+.message-row.bot {
+  align-self: flex-start;
+}
+
+/* ── Avatar icon (emoji circle) ── */
+.msg-avatar {
+  width          : 32px;
+  height         : 32px;
+  border-radius  : 50%;
+  background     : var(--input-bg);
+  border         : 1px solid var(--border-color);
+  display        : flex;
+  align-items    : center;
+  justify-content: center;
+  font-size      : 16px;
+  flex-shrink    : 0;
+  user-select    : none;
+}
+
+/* ── Bubble + timestamp wrapper ── */
+.bubble-wrap {
+  display       : flex;
+  flex-direction: column;
+  gap           : 3px;
+}
+
+.message-row.user .bubble-wrap { align-items: flex-end; }
+.message-row.bot  .bubble-wrap { align-items: flex-start; }
+
+/* Bubble base */
+.bubble {
+  padding      : 11px 16px;
+  border-radius: var(--radius-bubble);
+  font-size    : 14.5px;
+  line-height  : 1.65;
+  word-break   : break-word;
+  white-space  : pre-wrap; /* preserves \n line breaks */
+  transition   : background var(--transition), color var(--transition);
+}
+
+/* User bubble */
+.message-row.user .bubble {
+  background         : var(--user-bubble);
+  color              : var(--user-text);
+  border-bottom-right-radius: 5px;
+  box-shadow         : 0 4px 18px var(--accent-glow);
+}
+
+/* Bot bubble */
+.message-row.bot .bubble {
+  background         : var(--bot-bubble);
+  color              : var(--bot-text);
+  border-bottom-left-radius: 5px;
+  border             : 1px solid var(--border-color);
+}
+
+/* Timestamp */
+.msg-time {
+  font-size  : 11px;
+  color      : var(--text-meta);
+  padding    : 0 3px;
+}
+
+
+/* ── 7. TYPING INDICATOR ─────────────────────────────────────── */
+.typing-wrap {
+  display    : none;          /* shown by JS */
+  align-items: center;
+  gap        : 10px;
+  padding    : 4px 20px 10px;
+  flex-shrink: 0;
+}
+
+.typing-wrap.visible { display: flex; }
+
+.typing-bubble {
+  display      : flex;
+  align-items  : center;
+  gap          : 5px;
+  background   : var(--bot-bubble);
+  border       : 1px solid var(--border-color);
+  padding      : 10px 14px;
+  border-radius: var(--radius-bubble);
+  border-bottom-left-radius: 5px;
+}
+
+/* Animated bouncing dots */
+.typing-bubble span {
+  display      : block;
+  width        : 7px;
+  height       : 7px;
+  border-radius: 50%;
+  background   : var(--text-secondary);
+  animation    : dotBounce 1.2s ease-in-out infinite;
+}
+.typing-bubble span:nth-child(2) { animation-delay: 0.2s; }
+.typing-bubble span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes dotBounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30%            { transform: translateY(-7px); opacity: 1; }
+}
+
+.typing-label {
+  font-size: 12px;
+  color    : var(--text-meta);
+}
+
+
+/* ── 8. CHARACTER COUNT BAR ──────────────────────────────────── */
+.char-bar {
+  text-align : right;
+  font-size  : 11.5px;
+  color      : var(--text-meta);
+  padding    : 4px 20px 2px;
+  flex-shrink: 0;
+  transition : color var(--transition);
+}
+
+.char-bar.warn  { color: #f0a31a; }
+.char-bar.limit { color: #ff3c50; font-weight: 600; }
+
+
+/* ── 9. FOOTER / INPUT AREA ──────────────────────────────────── */
+.chat-footer {
+  display    : flex;
+  align-items: center;
+  gap        : 10px;
+  padding    : 12px 16px 18px;
+  background : var(--footer-bg);
+  border-top : 1px solid var(--border-color);
+  flex-shrink: 0;
+  transition : background var(--transition);
+}
+
+.chat-input {
+  flex         : 1;
+  background   : var(--input-bg);
+  border       : 1.5px solid var(--border-color);
+  border-radius: var(--radius-input);
+  color        : var(--text-primary);
+  font-family  : var(--font-body);
+  font-size    : 15px;
+  padding      : 12px 16px;
+  outline      : none;
+  transition   : border-color var(--transition), box-shadow var(--transition),
+                 background var(--transition);
+}
+
+.chat-input::placeholder { color: var(--text-meta); }
+
+.chat-input:focus {
+  border-color: var(--accent);
+  box-shadow  : 0 0 0 3px var(--accent-glow);
+}
+
+/* Send button */
+.send-btn {
+  width        : 50px;
+  height       : 50px;
+  border-radius: 50%;
+  background   : var(--send-bg);
+  border       : none;
+  color        : #fff;
+  cursor       : pointer;
+  display      : flex;
+  align-items  : center;
+  justify-content: center;
+  flex-shrink  : 0;
+  box-shadow   : 0 4px 18px var(--accent-glow);
+  transition   : transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s;
+}
+
+.send-btn:hover  { transform: scale(1.08); box-shadow: 0 6px 24px var(--accent-glow); }
+.send-btn:active { transform: scale(0.95); }
+
+.send-btn:disabled {
+  background: var(--border-color);
+  box-shadow: none;
+  cursor    : not-allowed;
+  opacity   : 0.6;
+  transform : none;
+}
+
+
+/* ── 10. RESPONSIVE (mobile) ─────────────────────────────────── */
+@media (max-width: 600px) {
+  .chat-shell   { border: none; }
+  .message-row  { max-width: 90%; }
+  .bot-name     { font-size: 15px; }
+  /* Hide the "Clear" text label, keep icon only */
+  .clear-icon-btn span { display: none; }
+  .clear-icon-btn      { padding: 7px 8px; }
+}
