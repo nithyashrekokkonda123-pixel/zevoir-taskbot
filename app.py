@@ -6,6 +6,8 @@ It receives messages from the browser, calls the external API,
 computes statistics, and sends back a formatted reply.
 """
 
+import os
+
 from flask import Flask, render_template, request, jsonify, session
 import requests  # used to call the external todos API
 
@@ -212,5 +214,5 @@ def clear():
 # START THE SERVER
 # ─────────────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    # debug=True → auto-reload on file changes + shows errors in browser
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
