@@ -16,7 +16,7 @@ app = Flask(__name__)
 app.secret_key = "zevoir-secret-key-2024"   # required to use Flask sessions
 
 # ── The public API we read todos from ────────────────────────────────────────
-TODOS_API = "https://jsonplaceholder.typicode.com/todos"
+TODOS_API = "https://jsonplaceholder.typicode.com/todosss"
 
 
 # ─────────────────────────────────────────────────────────────────────────────
